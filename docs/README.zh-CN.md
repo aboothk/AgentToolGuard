@@ -14,10 +14,6 @@
 | [威胁模型](threat-model.zh-CN.md) | 攻击者能力与防护措施 |
 | [实现限制](limitations.zh-CN.md) | 检测边界、网络检查和版本限制 |
 
-## 项目协作
-
-[贡献指南](../CONTRIBUTING.zh-CN.md) · [安全策略](../SECURITY.md) · [变更记录](../CHANGELOG.zh-CN.md)
-
 ## 评测
 
 [AgentDojo 回放、结果与基准复现](../bench/agentdojo/README.zh-CN.md)

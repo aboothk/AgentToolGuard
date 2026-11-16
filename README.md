@@ -99,4 +99,4 @@ The JSONL audit log stores argument lengths, digests and destination hosts. Full
 
 See [compatibility](docs/compatibility.md) for supported transports and protocol versions, and [architecture](docs/architecture.md) for the request path and [stdio latency benchmark](bench/latency/measure.py).
 
-[Report a security issue](SECURITY.md) · [MIT license](LICENSE)
+[MIT license](LICENSE)

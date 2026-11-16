@@ -41,7 +41,7 @@ LLM 对受保护内容进行摘要、翻译或改写后，参数可能不再包�
 
 ## v0.1 的其他限制
 
-- 客户端仅支持 stdio，下游支持 Streamable HTTP。面向 HTTP 客户端及令牌认证在英文原文中列为 v0.2 计划。
+- 客户端仅支持 stdio，下游支持 Streamable HTTP。面向 HTTP 客户端及令牌认证尚未实现。
 - resources、prompts、sampling 及其他 MCP 请求被拒绝，因为这些内容还未纳入标签系统，尚无透传选项。
 - 未收到 list_changed 时，按 tools_recheck_seconds（默认 30 秒）重新列举工具，轮询间隙的替换无法即时发现。v0.1 的 HTTP 上游依赖轮询。
 - 热重载覆盖策略、数据流、审批、审计和锁文件。修改 servers 需要重启。
@@ -51,6 +51,15 @@ LLM 对受保护内容进行摘要、翻译或改写后，参数可能不再包�
 - stdio 网关每进程一个会话，会话寿命等于进程寿命。
 - 用户编写的病态正则表达式可能导致检查缓慢。
 
-## 后续能力（设计文档 §15 M5–M6）
+## SDK 与适配器的限制
 
-英文原文将 LangGraph 中间件、AgentDojo 适配器与结果、drift_policy: cue、resources/prompts 标签、elicitation 审批和证据冲突处理列为后续工作。开发分支可能已有适配器文件，这一计划列表不代表已经完成验证或发布。
+- **本地工具的函数体不被锁定。** 摘要只覆盖名称、文档字符串以及参数名和类型；实现被修改时无法发现，这部分靠代码审查和依赖锁定。
+- **任务保存在 `ContextVar` 中。** 它会跟随 asyncio 任务和 `contextvars.copy_context().run(...)`，不会跟随裸线程；来自这类线程的调用会被拒绝（`AG_NO_TASK`）。
+- **LangGraph 中断后，工具节点会从头重新执行。** 审批会再问一次，决策会再审计一次（同一次调用出现重复的 `call.decided` 和 `approval.requested` 记录）；工具本身只执行一次。
+- **同一条模型消息中的多个工具调用并行执行，各有自己的任务。** 如果其中两个都需要审批，对 `Command(resume="approve")` 这样的裸回答，LangGraph 会抛出 `RuntimeError`；应按 `tests/adapters/test_langgraph.py` 中的做法，用“中断 id → 回答”的映射恢复。没有得到回答的调用不会执行。
+- **run id 和会话保存在进程内存中。** 进程重启后会开始新会话，不会从检查点恢复。
+- **AgentDojo 回放不是 LLM 基准。** 它度量的是按 AgentDojo 标准答案行事的脚本化智能体。LLM 运行的结果和它的范围见 `bench/agentdojo/README.zh-CN.md`。部分 AgentDojo 注入任务按“尝试过的调用”计分，被拦截的尝试在那里仍算攻击成功。
+
+## 尚未实现（设计文档 §15 M6）
+
+`drift_policy: cue`、资源和提示词纳入标签体系、基于 elicitation 的审批、证据冲突（“shadowing”）、面向客户端的 Streamable HTTP、其他智能体框架的适配器。

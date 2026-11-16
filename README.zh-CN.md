@@ -159,8 +159,8 @@ python -m pip install -e ".[dev]"
 python -m pytest
 ```
 
-[v0.1.0 变更记录](CHANGELOG.zh-CN.md)列出了网关功能及发布状态，[兼容性说明](docs/compatibility.zh-CN.md)列出了支持的传输方式和协议版本。[架构说明](docs/architecture.zh-CN.md)介绍了网关处理请求的流程，也可以运行 [stdio 延迟基准脚本](bench/latency/measure.py)测量调用开销。
+[兼容性说明](docs/compatibility.zh-CN.md)列出了支持的传输方式和协议版本。[架构说明](docs/architecture.zh-CN.md)介绍了网关处理请求的流程，也可以运行 [stdio 延迟基准脚本](bench/latency/measure.py)测量调用开销。
 
-[贡献指南](CONTRIBUTING.zh-CN.md) · [报告安全问题](SECURITY.md) · [MIT 许可证](LICENSE)
+[MIT 许可证](LICENSE)
 
 中文文档的完整导航见[文档索引](docs/README.zh-CN.md)。
