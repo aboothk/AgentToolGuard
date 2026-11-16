@@ -10,3 +10,12 @@ build/
 ref/
 ref/
 .claude/
+.venv-*/
+
+# internal design documents: not published
+AgentGuard_项目功能说明文档.md
+AgentGuard开发指导文档.md
+AgentGuard开发文档_v2.md
+SECURITY.zh-CN.md
+CHANGELOG.md
+CONTRIBUTING.md

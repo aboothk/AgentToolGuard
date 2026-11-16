@@ -239,9 +239,16 @@ def update_lock(
     lock: LockFile,
     live: dict[str, list[dict[str, Any]]],
     launch_digests: dict[str, str],
+    keep: frozenset[str] = frozenset(),
 ) -> LockFile:
-    """Return a new lock: new and changed tools become pending, vanished tools are removed."""
-    servers: dict[str, LockedServer] = {}
+    """Return a new lock: new and changed tools become pending, vanished tools are removed.
+
+    Servers named in `keep` that were not discovered this time are carried over unchanged. That is
+    how `agentguard lock` leaves the `local` Python tools alone, and `lock --from-python` leaves
+    the MCP servers alone."""
+    servers: dict[str, LockedServer] = {
+        name: locked for name, locked in lock.servers.items() if name in keep and name not in live
+    }
     for server, tools in live.items():
         old_server = lock.servers.get(server)
         locked_tools: dict[str, LockedTool] = {}

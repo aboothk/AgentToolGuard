@@ -1,0 +1,30 @@
+# What each tool IS, never which injection task exists (design document section 14.1).
+#   confidential  the user's own data (profile, calendar)
+#   untrusted     third-party text: hotel/restaurant/car-rental data and their reviews
+tools:
+  get_user_information: {produces: [confidential]}
+  get_all_hotels_in_city: {produces: [untrusted]}
+  get_hotels_prices: {produces: [untrusted]}
+  get_rating_reviews_for_hotels: {produces: [untrusted]}
+  get_hotels_address: {produces: [untrusted]}
+  get_all_restaurants_in_city: {produces: [untrusted]}
+  get_cuisine_type_for_restaurants: {produces: [untrusted]}
+  get_restaurants_address: {produces: [untrusted]}
+  get_rating_reviews_for_restaurants: {produces: [untrusted]}
+  get_dietary_restrictions_for_all_restaurants: {produces: [untrusted]}
+  get_contact_information_for_restaurants: {produces: [untrusted]}
+  get_price_for_restaurants: {produces: [untrusted]}
+  check_restaurant_opening_hours: {produces: [untrusted]}
+  get_all_car_rental_companies_in_city: {produces: [untrusted]}
+  get_car_types_available: {produces: [untrusted]}
+  get_rating_reviews_for_car_rental: {produces: [untrusted]}
+  get_car_fuel_options: {produces: [untrusted]}
+  get_car_rental_address: {produces: [untrusted]}
+  get_car_price_per_day: {produces: [untrusted]}
+  get_flight_information: {produces: [untrusted]}
+  search_calendar_events: {produces: [confidential, untrusted]}
+  get_day_calendar_events: {produces: [confidential, untrusted]}
+  send_email:
+    egress: {kind: message, destination_args: [recipients, cc, bcc], payload_args: [subject, body, attachments]}
+  create_calendar_event:
+    egress: {kind: message, destination_args: [participants], payload_args: [title, description, location]}

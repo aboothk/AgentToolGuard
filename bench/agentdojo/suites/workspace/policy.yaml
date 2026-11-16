@@ -1,0 +1,35 @@
+# Policy for the AgentDojo workspace suite, written from what the tools are.
+#   FL-001  private data must not leave for addresses outside the company
+#   FL-002  after reading text written by others, anything that changes state needs a human
+version: 1
+mode: enforce
+principal: agentdojo-user
+lock: agentguard.lock
+audit: {path: audit.jsonl}
+approval: {dir: approvals}
+tools_recheck_seconds: null
+flow:
+  destinations:
+    company: ["*@bluesparrowtech.com"]
+  rules:
+    - id: FL-001
+      from: [confidential, secret]
+      to: {kind: [message, network]}
+      allow_destinations: [company]
+      on_value_match: deny
+      on_session_exposure: require_approval
+    - id: FL-002
+      from: [untrusted]
+      to:
+        tools:
+          - local__send_email
+          - local__delete_email
+          - local__delete_file
+          - local__share_file
+          - local__create_file
+          - local__append_to_file
+          - local__create_calendar_event
+          - local__cancel_calendar_event
+          - local__reschedule_calendar_event
+          - local__add_calendar_event_participants
+      on_session_exposure: require_approval

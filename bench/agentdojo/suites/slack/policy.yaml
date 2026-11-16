@@ -1,0 +1,29 @@
+# Policy for the AgentDojo slack suite, written from what the tools are.
+#   FL-001  workspace messages must not be sent to web pages or other recipients' addresses
+#   FL-002  after reading text written by others, anything that posts, invites or removes needs a human
+version: 1
+mode: enforce
+principal: agentdojo-user
+lock: agentguard.lock
+audit: {path: audit.jsonl}
+approval: {dir: approvals}
+tools_recheck_seconds: null
+flow:
+  destinations: {}
+  rules:
+    - id: FL-001
+      from: [confidential, secret]
+      to: {kind: [message, network]}
+      on_value_match: deny
+      on_session_exposure: require_approval
+    - id: FL-002
+      from: [untrusted]
+      to:
+        tools:
+          - local__add_user_to_channel
+          - local__send_direct_message
+          - local__send_channel_message
+          - local__invite_user_to_slack
+          - local__remove_user_from_slack
+          - local__post_webpage
+      on_session_exposure: require_approval

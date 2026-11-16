@@ -21,6 +21,8 @@ class Session:
     clock: Callable[[], float] = time.monotonic
     labels: set[str] = field(default_factory=set)  # only grows, except via `declassify`
     saturation_reported: bool = False
+    # Task-level grants (section 11.1): tool-id glob -> destination set names replacing the rule's own
+    destination_overrides: dict[str, list[str]] = field(default_factory=dict)
     _recent_calls: dict[str, deque[float]] = field(default_factory=lambda: defaultdict(deque))
     _call_numbers: itertools.count[int] = field(default_factory=lambda: itertools.count(1))
 

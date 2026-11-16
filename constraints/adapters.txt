@@ -1,0 +1,14 @@
+# Versions the adapter tests and the shipped AgentDojo lockfiles were generated and checked with.
+# Tool digests come from Pydantic's JSON schema, so pydantic and agentdojo must match exactly for
+# `python bench/agentdojo/build_locks.py --check` to pass. Use: pip install -c constraints/adapters.txt ...
+agentdojo==0.1.35
+docstring_parser==0.18.0
+pydantic==2.14.3
+pydantic_core==2.50.4
+langchain==1.5.0
+langchain-core==1.8.1
+langchain-protocol==0.0.21
+langgraph==1.2.22
+langgraph-checkpoint==4.3.2
+langgraph-prebuilt==1.1.2
+langgraph-sdk==0.4.14

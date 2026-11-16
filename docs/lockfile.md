@@ -1,5 +1,7 @@
 # Lockfile
 
+English · [简体中文](lockfile.zh-CN.md)
+
 `agentguard.lock` is YAML, sorted by server and tool so Git diffs stay small.
 
 ```yaml

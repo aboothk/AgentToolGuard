@@ -1,5 +1,7 @@
 # Threat model
 
+English · [简体中文](threat-model.zh-CN.md)
+
 ## What the attacker can and cannot do
 
 Can control: web pages and search results, the tool definitions and responses of an MCP server, documents and memory the agent can read.

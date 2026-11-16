@@ -17,7 +17,6 @@ from collections.abc import Awaitable, Callable
 from typing import Any
 
 import httpx
-from mcp.types import LATEST_PROTOCOL_VERSION
 
 from agentguard import __version__
 from agentguard.adapters.mcp.frames import (
@@ -34,6 +33,7 @@ from agentguard.adapters.mcp.frames import (
     parse_message,
     read_line,
 )
+from agentguard.adapters.mcp.protocol import LATEST_PROTOCOL_VERSION
 from agentguard.core.canonical import find_violation
 from agentguard.core.policy import ServerConfig
 

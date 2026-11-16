@@ -30,7 +30,8 @@ from agentguard.core.lock import (
     update_lock,
 )
 from agentguard.core.poison import scan_tool
-from agentguard.core.policy import Config, ConfigError, load_config
+from agentguard.core.policy import LOCAL_SERVER, Config, ConfigError, load_config
+from agentguard.sdk.local_tools import load_python_tools
 
 app = typer.Typer(help="MCP tool lockfile + data-flow policy gateway.", no_args_is_help=True)
 lock_app = typer.Typer(help="Create, review and approve the tool lockfile.", invoke_without_command=True)
@@ -39,6 +40,10 @@ app.add_typer(lock_app, name="lock")
 app.add_typer(audit_app, name="audit")
 
 ConfigOption = Annotated[Path, typer.Option("--config", "-c", help="Path to agentguard.yaml.")]
+FromPythonOption = Annotated[
+    list[str] | None,
+    typer.Option("--from-python", help="module:attribute holding local Python tools (repeatable)."),
+]
 DEFAULT_CONFIG = Path("agentguard.yaml")
 
 INIT_CONFIG = """\
@@ -102,14 +107,29 @@ def _discover(config: Config) -> tuple[dict[str, list[dict[str, Any]]], dict[str
     return live, errors
 
 
-def _discover_or_exit(config: Config) -> dict[str, list[dict[str, Any]]]:
+def _discover_or_exit(
+    config: Config, from_python: list[str] | None = None
+) -> dict[str, list[dict[str, Any]]]:
     """Discovery for commands that read or write the lockfile. Any failure stops them: a server
-    that cannot be reached must never look like 'no differences' or 'tools removed'."""
+    that cannot be reached must never look like 'no differences' or 'tools removed'.
+
+    Local Python tools (`--from-python`) are added under the reserved server name `local`."""
     live, errors = _discover(config)
+    if from_python:
+        try:
+            live[LOCAL_SERVER] = [d for spec in from_python for d in load_python_tools(spec)]
+        except (ValueError, ImportError, AttributeError) as exc:
+            errors[LOCAL_SERVER] = str(exc)
+            typer.echo(f"error: local: {exc}", err=True)
     if errors:
         typer.echo("lockfile not checked or changed because discovery failed", err=True)
         raise typer.Exit(1)
     return live
+
+
+def _keep_local(from_python: list[str] | None) -> frozenset[str]:
+    """Without --from-python the local tools are not in scope, so their entries stay as they are."""
+    return frozenset() if from_python else frozenset({LOCAL_SERVER})
 
 
 # --- init / serve -------------------------------------------------------------------------
@@ -156,6 +176,7 @@ def lock_command(
     ctx: typer.Context,
     config: ConfigOption = DEFAULT_CONFIG,
     check: Annotated[bool, typer.Option(help="Verify only; exit 1 on any difference (for CI).")] = False,
+    from_python: FromPythonOption = None,
 ) -> None:
     """With no subcommand: connect to the servers and update the lockfile."""
     if ctx.invoked_subcommand is not None:
@@ -163,7 +184,7 @@ def lock_command(
     settings = _config(config)
     lock_path = settings.resolve(settings.lock)
     old = load_lock(lock_path) if lock_path.exists() else LockFile()
-    live = _discover_or_exit(settings)
+    live = _discover_or_exit(settings, from_python)
     changes = compute_changes(old, live, _launch_digests(settings))
 
     if check:
@@ -172,7 +193,7 @@ def lock_command(
             raise typer.Exit(1)
         typer.echo("lockfile is up to date and fully approved")
         return
-    save_lock(update_lock(old, live, _launch_digests(settings)), lock_path)
+    save_lock(update_lock(old, live, _launch_digests(settings), _keep_local(from_python)), lock_path)
     _print_changes(changes)
     typer.echo(f"wrote {lock_path}. Review with `agentguard lock diff`, then `agentguard lock approve`.")
 
@@ -192,10 +213,10 @@ def _print_changes(changes: list[Change]) -> None:
 
 
 @lock_app.command("diff")
-def lock_diff(config: ConfigOption = DEFAULT_CONFIG) -> None:
+def lock_diff(config: ConfigOption = DEFAULT_CONFIG, from_python: FromPythonOption = None) -> None:
     """Show how the servers differ from the lockfile, with poisoning hints."""
     settings = _config(config)
-    lock, live = _lock(settings), _discover_or_exit(settings)
+    lock, live = _lock(settings), _discover_or_exit(settings, from_python)
     changes = compute_changes(lock, live, _launch_digests(settings))
     if not changes:
         typer.echo("no differences")
@@ -220,11 +241,12 @@ def lock_approve(
     config: ConfigOption = DEFAULT_CONFIG,
     server: Annotated[str | None, typer.Option(help="Only this server.")] = None,
     tool: Annotated[str | None, typer.Option(help="Only this tool.")] = None,
+    from_python: FromPythonOption = None,
 ) -> None:
     """Approve pending tools, but only if the server still reports what was locked."""
     settings = _config(config)
     lock_path = settings.resolve(settings.lock)
-    lock, live = _lock(settings), _discover_or_exit(settings)
+    lock, live = _lock(settings), _discover_or_exit(settings, from_python)
     pending = {
         (name, tool_name)
         for name, locked_server in lock.servers.items()

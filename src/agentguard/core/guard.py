@@ -13,7 +13,7 @@ import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from agentguard.core.approval import (
     ApprovalError,
@@ -110,9 +110,16 @@ class Guard:
     # --- tool listing ---------------------------------------------------------------------
 
     def filter_tools(
-        self, server: str, tools: list[dict[str, Any]], launch_matches: bool = True
+        self,
+        server: str,
+        tools: list[dict[str, Any]],
+        launch_matches: bool = True,
+        additive: bool = False,
     ) -> list[dict[str, Any]]:
-        """Keep only tools that are approved and unchanged; audit everything else (§5.3)."""
+        """Keep only tools that are approved and unchanged; audit everything else (section 5.3).
+
+        `additive` adds to the exposed set of `server` instead of replacing it. Local Python
+        tools register one by one, so each registration must keep the earlier ones."""
         exposed: list[dict[str, Any]] = []
         if not launch_matches:
             self._audit_quietly("tool_drift", server=server, detail="server launch command changed")
@@ -131,16 +138,25 @@ class Guard:
                 self._audit_quietly("tool_rejected", tool=tool_id, detail=detail)
             else:
                 self._audit_quietly("tool_unknown", tool=tool_id, detail=detail)
-        self._exposed[server] = {tool["name"] for tool in exposed}
+        names = {tool["name"] for tool in exposed}
+        self._exposed[server] = (self._exposed.get(server, set()) | names) if additive else names
         self._audit_quietly("tool.listed", server=server, exposed=sorted(self._exposed[server]))
         return exposed
 
     # --- request side ---------------------------------------------------------------------
 
-    def before_call(self, session: Session, call: ToolCall) -> Verdict:
+    def before_call(
+        self, session: Session, call: ToolCall, approvals: Literal["file", "external"] = "file"
+    ) -> Verdict:
+        """Decide a call. With `approvals="external"` the caller handles require_approval itself
+        (the SDK's approval handlers); no file-based approval is created."""
         try:
             raw = self._evaluate(session, call)
-            if raw.decision is Decision.REQUIRE_APPROVAL and self.config.mode == "enforce":
+            if (
+                raw.decision is Decision.REQUIRE_APPROVAL
+                and self.config.mode == "enforce"
+                and approvals == "file"
+            ):
                 raw = self._resolve_approval(session, call, raw)
         except AuditError:
             return Verdict(decision=Decision.DENY, reason_code=Reason.AUDIT_FAILURE)
@@ -319,7 +335,7 @@ class Guard:
                 summary=redact_args(call.args, locked.egress if locked else None),
                 rule_ids=raw.rule_ids,
                 reason_code=raw.reason_code,
-                evidence=[_describe(item) for item in raw.evidence],
+                evidence=[describe_evidence(item) for item in raw.evidence],
                 max_pending=self.config.approval.max_pending_per_session,
             )
         except ApprovalError:
@@ -337,7 +353,20 @@ class Guard:
     # --- response side --------------------------------------------------------------------
 
     def after_call(self, session: Session, call: ToolCall, result: dict[str, Any]) -> LabeledResult:
+        """Response side for an MCP tool result. The result is returned unchanged."""
         labels = self._flow.tag_result(session, call.call_id, self._locked(call), result)
+        return self._finish_result(session, call, labels, result, bool(result.get("isError")))
+
+    def after_call_texts(
+        self, session: Session, call: ToolCall, texts: list[str], is_error: bool = False
+    ) -> LabeledResult:
+        """Response side for tools that are not MCP: the caller supplies the output strings."""
+        labels = set() if is_error else self._flow.tag_texts(session, call.call_id, self._locked(call), texts)
+        return self._finish_result(session, call, labels, {}, is_error)
+
+    def _finish_result(
+        self, session: Session, call: ToolCall, labels: set[str], result: dict[str, Any], is_error: bool
+    ) -> LabeledResult:
         self._apply_declassification(session, call)
         self._audit_quietly(
             "call.result",
@@ -345,7 +374,7 @@ class Guard:
             tool=call.tool_id,
             call_id=call.call_id,
             labels=sorted(labels),
-            is_error=bool(result.get("isError")),
+            is_error=is_error,
         )
         if session.index.saturated and not session.saturation_reported:
             session.saturation_reported = True
@@ -421,7 +450,8 @@ class Guard:
         )
 
 
-def _describe(evidence: Evidence) -> str:
+def describe_evidence(evidence: Evidence) -> str:
+    """One short line for approval prompts."""
     parts = [f"{evidence.level} {evidence.label}"]
     if evidence.detail:
         parts.append(evidence.detail)

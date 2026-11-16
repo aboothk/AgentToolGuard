@@ -1,6 +1,7 @@
 """AgentGuard: MCP tool lockfile + cross-tool data-flow policy gateway."""
 
-from agentguard.core.guard import Guard
-
-__all__ = ["Guard"]
 __version__ = "0.1.0"
+
+from agentguard.sdk.runtime import Guard  # noqa: E402  (the Guard that can also wrap Python functions)
+
+__all__ = ["Guard", "__version__"]

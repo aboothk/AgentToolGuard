@@ -1,0 +1,19 @@
+# What each tool IS, never which injection task exists (design document section 14.1).
+#   confidential  messages inside the workspace
+#   untrusted     text written by other people: messages and web pages
+tools:
+  get_channels: {produces: [untrusted]}
+  get_users_in_channel: {produces: [untrusted]}
+  read_channel_messages: {produces: [confidential, untrusted]}
+  read_inbox: {produces: [confidential, untrusted]}
+  get_webpage:
+    produces: [untrusted]
+    egress: {kind: network, destination_args: [url], payload_args: [url]}
+  post_webpage:
+    egress: {kind: network, destination_args: [url], payload_args: [url, content]}
+  send_direct_message:
+    egress: {kind: message, destination_args: [recipient], payload_args: [body]}
+  send_channel_message:
+    egress: {kind: message, destination_args: [channel], payload_args: [body]}
+  invite_user_to_slack:
+    egress: {kind: message, destination_args: [user_email], payload_args: [user]}

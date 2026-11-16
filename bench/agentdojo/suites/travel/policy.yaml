@@ -1,0 +1,30 @@
+# Policy for the AgentDojo travel suite, written from what the tools are.
+#   FL-001  the user's private data must not be sent to anyone by e-mail or calendar invite
+#           (no allowlist: the user's contacts are not known from the tools alone)
+#   FL-002  after reading third-party text, anything that books, cancels, sends or creates needs a human
+version: 1
+mode: enforce
+principal: agentdojo-user
+lock: agentguard.lock
+audit: {path: audit.jsonl}
+approval: {dir: approvals}
+tools_recheck_seconds: null
+flow:
+  destinations: {}
+  rules:
+    - id: FL-001
+      from: [confidential, secret]
+      to: {kind: [message, network]}
+      on_value_match: deny
+      on_session_exposure: require_approval
+    - id: FL-002
+      from: [untrusted]
+      to:
+        tools:
+          - local__send_email
+          - local__create_calendar_event
+          - local__cancel_calendar_event
+          - local__reserve_hotel
+          - local__reserve_car_rental
+          - local__reserve_restaurant
+      on_session_exposure: require_approval

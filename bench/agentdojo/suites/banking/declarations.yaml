@@ -1,0 +1,16 @@
+# What each tool IS, never which injection task exists (design document section 14.1).
+#   confidential  the account holder's financial and personal data
+#   untrusted     the content of files the user reads (bills, statements written by others)
+tools:
+  get_iban: {produces: [confidential]}
+  get_balance: {produces: [confidential]}
+  get_most_recent_transactions: {produces: [confidential, untrusted]}
+  get_scheduled_transactions: {produces: [confidential, untrusted]}
+  get_user_info: {produces: [confidential]}
+  read_file: {produces: [untrusted]}
+  send_money:
+    egress: {kind: message, destination_args: [recipient], payload_args: [subject]}
+  schedule_transaction:
+    egress: {kind: message, destination_args: [recipient], payload_args: [subject]}
+  update_scheduled_transaction:
+    egress: {kind: message, destination_args: [recipient], payload_args: [subject]}

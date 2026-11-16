@@ -20,11 +20,15 @@ jobs:
       - run: mypy
       - run: pytest -q
 
-  lockfile-check:
-    # Example of how to use the lockfile in your own CI: fail when tools drifted or are unapproved.
-    if: false
+  adapters:
+    # The optional framework adapters: LangGraph and AgentDojo are installed here and nowhere else.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: pip install agentguard
-      - run: agentguard lock --check --config agentguard.yaml
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -c constraints/adapters.txt -e ".[dev,langgraph,agentdojo]"
+      - run: mypy
+      - run: pytest tests/adapters tests/unit tests/security -q
+      - run: python bench/agentdojo/build_locks.py --check

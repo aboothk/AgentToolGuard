@@ -1,0 +1,116 @@
+lock_version: 1
+servers:
+  local:
+    launch_digest: null
+    tools:
+      get_balance:
+        approved_at: null
+        digest: sha256:f820be5e8441fb1284b8d8541ad89f8a133e6c0df11d2450dba23b7e2cf3297e
+        egress: null
+        labels:
+          produces:
+          - confidential
+        status: approved
+        structural: sha256:8527c91f89799b3db11eabb730c5938ffedbdc147d99697544f5feb261125280
+      get_iban:
+        approved_at: null
+        digest: sha256:c972034573a6c04726f74db2df9d444ec375988433624901d48f89510ea2f765
+        egress: null
+        labels:
+          produces:
+          - confidential
+        status: approved
+        structural: sha256:281b293f64ada49ff41f0c3f91f4508ecf54579ac0663b33cead96193583da09
+      get_most_recent_transactions:
+        approved_at: null
+        digest: sha256:78feedc1ade3b99330dec0c43a72ba0c182efee28c392e6892bcc38b3c331fb1
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:2c3b575196b750b89e4cbc1816794a1e8c7e1d340be804ce0358676b9e98a02d
+      get_scheduled_transactions:
+        approved_at: null
+        digest: sha256:73fdf78e0ff9e3d4a0d2546162d1bd81fbdbcb7af5b84ce5392f31bc0e9077a9
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:dc5e1a63d7fb3c91752272193f6aa821cde8d77c2572714c58829a3aa46a3cd2
+      get_user_info:
+        approved_at: null
+        digest: sha256:a6901580dadd08139c60b9a362b633f0c2db104234993d0ed935532567812442
+        egress: null
+        labels:
+          produces:
+          - confidential
+        status: approved
+        structural: sha256:6ed6c389fdc3b89dfa9cf3e4189fa98a4081b15fae3e9b010886b76990558847
+      read_file:
+        approved_at: null
+        digest: sha256:52e8825570736e9f7cc16118b21f04e041d877391ae127bc3bf2add36dc15748
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:ec670295bc55d0fd51ccc624d0c0b4742de6412eeb2a091449dad7c4105547d3
+      schedule_transaction:
+        approved_at: null
+        digest: sha256:2285f5952053200043f1e94fb3fd5b96f67554c5dfbd007d61f452507ec28553
+        egress:
+          destination_args:
+          - recipient
+          kind: message
+          payload_args:
+          - subject
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:03c9329e490f6090eab148b364bb2e48278593c6ee006e29534a2defbe968ac4
+      send_money:
+        approved_at: null
+        digest: sha256:bd774f11cd14689d3fb80802481637baf66d1d9145b7104294b49455d4440178
+        egress:
+          destination_args:
+          - recipient
+          kind: message
+          payload_args:
+          - subject
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:d272157bbd99f71012886ecc18d39caf17fa2ee13d807e04e983411b0c4d26e0
+      update_password:
+        approved_at: null
+        digest: sha256:f9abee7166a8673c0679de2901a6036de28e08786710cfdd80baf5a322963f16
+        egress: null
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:12cf9a0c299b158ba0553a8cb5e5be35313c30158291678442472a1f46e2da8b
+      update_scheduled_transaction:
+        approved_at: null
+        digest: sha256:3f40fb96d170776c4c66372ff1996941492a2df60d90d27d204d591b41c89fe5
+        egress:
+          destination_args:
+          - recipient
+          kind: message
+          payload_args:
+          - subject
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:e72aee1d139064d17d81619ecc4e7fc25e62f14b0840a3e7d4086436d7cbcdce
+      update_user_info:
+        approved_at: null
+        digest: sha256:c99e0dd2612e85d01884f2bf9341c1a0e5ba487cfbd75e5cdd58a0e80a42d593
+        egress: null
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:57970228812754c1fce5bd212e44e5b14c5986b1b6a0f94eed47d76a32b24c22

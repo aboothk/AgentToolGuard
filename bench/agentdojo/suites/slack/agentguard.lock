@@ -1,0 +1,126 @@
+lock_version: 1
+servers:
+  local:
+    launch_digest: null
+    tools:
+      add_user_to_channel:
+        approved_at: null
+        digest: sha256:ea2a10864d07e53f37263ad08e9abe76cb15c97ce3acb662140f5365f3ce3551
+        egress: null
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:dca13ecb4a1098b99f5e248cf8d99e63d36124d115ca24acdd098b934db956a9
+      get_channels:
+        approved_at: null
+        digest: sha256:2fc81445c94e11753c05f6cc83bb8cb37cc750bdedee6029269b0b50a61d5ae7
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:443bb1dd4dc423b5850aaa81a2affdf1744a5ecfa4837e2257e1f3ee5583cd4d
+      get_users_in_channel:
+        approved_at: null
+        digest: sha256:00cfc751e0a884144826932460a529d795c0b0807e519c61836b5641990d21e6
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:c23f5faf18db1f09bd65ee6be71828adc7cfc755bd296a8c29989f4121de4e31
+      get_webpage:
+        approved_at: null
+        digest: sha256:068ed7fc30f03717d1efb99789e7245d3b997d18ef9e9e1f94d0d53898da4be0
+        egress:
+          destination_args:
+          - url
+          kind: network
+          payload_args:
+          - url
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:b2418ab8c1e12fc8801252ae3a35314c24546bac575790fac82e5aae974b81b0
+      invite_user_to_slack:
+        approved_at: null
+        digest: sha256:e929f9abd709a37ce217f06b67f8722bb623c6b1311c3c404a2f8e2459a28241
+        egress:
+          destination_args:
+          - user_email
+          kind: message
+          payload_args:
+          - user
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:8cc197a1b78fa1f948e31ab65d174add8884276b7ee84ee420b342501936a8ba
+      post_webpage:
+        approved_at: null
+        digest: sha256:9ef0e7b09b6a4f8b3b3b04a29a69afbeda69f98fc1f14f80b631f16e0e4ca3b3
+        egress:
+          destination_args:
+          - url
+          kind: network
+          payload_args:
+          - url
+          - content
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:eff2d5d5a9175a931e62444c1ca9a823d9bd36c5df7c6195f481e07c2beb8d47
+      read_channel_messages:
+        approved_at: null
+        digest: sha256:9fed3249b06e2c23c57436a910def4334f5549da70ae2969d3637c93e6d597e2
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:2d87d86a70d4745d1c326e40978278ed4bc33cc539dfd6ebc09f313dae8e69e7
+      read_inbox:
+        approved_at: null
+        digest: sha256:7cd6cd4081d8c6ad205d33e8570c042534be2133932240e8b01dfc24ccfcf816
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:14c96bf5ccd67519be4858228a227e166927465f199c953a907b8886440d41bd
+      remove_user_from_slack:
+        approved_at: null
+        digest: sha256:708fe237ce9863ff2b73999dd92ce82bf7abfd1c1641f5069522609e35d0f566
+        egress: null
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:36ce84ebcc73633155053ce473fc0639c90998b774be08367d42954c384201c9
+      send_channel_message:
+        approved_at: null
+        digest: sha256:9820521ffd34d63de0712271d4f27ab1d3b2680b02f378bc173913513824b37a
+        egress:
+          destination_args:
+          - channel
+          kind: message
+          payload_args:
+          - body
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:8f2ca65d71125053689713cb772be79cfe6b7437999bfd1a3209320283c11c8e
+      send_direct_message:
+        approved_at: null
+        digest: sha256:30580e0b220f222dca4050d3cd0ce0c858c40c6056785d4ca1d2760b3b0dd747
+        egress:
+          destination_args:
+          - recipient
+          kind: message
+          payload_args:
+          - body
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:d9bcd0c5b5d97b973156736b809c10c2e0c0e511b941d8d7747334efe38ce74c

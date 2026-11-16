@@ -145,3 +145,49 @@ def read_data(guard: Guard, session: Session, tool_id: str, text: str, **args: A
 def audit_events(tmp_path: Path, event: str | None = None) -> list[dict[str, Any]]:
     entries = read_entries(tmp_path / "audit.jsonl")
     return [entry for entry in entries if event is None or entry["event"] == event]
+
+
+# --- SDK helpers --------------------------------------------------------------------------
+
+
+def build_sdk_guard(
+    tmp_path: Path,
+    functions: dict[str, Any],
+    declarations: dict[str, dict[str, Any]] | None = None,
+    config: dict[str, Any] | None = None,
+    clock: FakeClock | None = None,
+) -> Any:
+    """An SDK Guard whose lockfile approves the given plain functions under `local`.
+
+    `functions` maps a tool name to a function, or to (function, excluded parameter names)."""
+    from agentguard.sdk import Guard as SdkGuard
+    from agentguard.sdk import tool_definition
+
+    definitions = []
+    for name, entry in functions.items():
+        fn, exclude = entry if isinstance(entry, tuple) else (entry, ())
+        definitions.append(tool_definition(fn, name, exclude))
+    lock = update_lock(LockFile(), {"local": definitions}, {})
+    for key, declared in (declarations or {}).items():
+        if key not in lock.servers["local"].tools:
+            continue
+        locked = lock.servers["local"].tools[key]
+        locked.labels = ToolLabels(produces=declared.get("produces", []))
+        locked.egress = declared.get("egress")
+    approve(lock)
+    settings: dict[str, Any] = {"flow": FLOW_CONFIG, **(config or {})}
+    clock = clock or FakeClock()
+    parsed = parse_config(yaml.safe_dump(settings), base_dir=tmp_path)
+    return SdkGuard(
+        config=parsed,
+        lock=lock,
+        audit=AuditLog(tmp_path / "audit.jsonl"),
+        approvals=ApprovalStore(tmp_path / "approvals", parsed.approval.timeout_seconds, clock),
+        clock=clock,
+    )
+
+
+SDK_DECLARATIONS: dict[str, dict[str, Any]] = {
+    "read_note": {"produces": ["confidential"]},
+    "send_report": {"egress": Egress(kind="message", destination_args=["to"], payload_args=["body"])},
+}

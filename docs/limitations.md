@@ -1,5 +1,7 @@
 # Limitations
 
+English · [简体中文](limitations.zh-CN.md)
+
 Read this before relying on AgentGuard. It is a *parameter-level* control, not a sandbox.
 
 ## What is not protected (threat model §3.3)
@@ -53,6 +55,15 @@ Tools without a declared `egress` are not rule-checked on their arguments. Agent
 - **One session per gateway process** (stdio): a session is the process lifetime.
 - Policy regular expressions are written by you; a pathological pattern can be slow.
 
-## Not implemented yet (design document §15 M5-M6)
+## Limits of the SDK and the adapters
 
-LangGraph middleware, AgentDojo adapter and results, `drift_policy: cue`, resources/prompts in the label system, elicitation-based approval, evidence conflicts ("shadowing").
+- **A local tool's function body is not locked.** The digest covers name, docstring, and parameter names and types; a changed implementation is not detected (code review and dependency pinning cover that).
+- **The task is a `ContextVar`.** It follows asyncio tasks and `contextvars.copy_context().run(...)`, not a bare thread; a call from such a thread is refused (`AG_NO_TASK`).
+- **After a LangGraph interrupt the tool node runs again from its start.** The approval is asked again and the decision is audited again (duplicate `call.decided` and `approval.requested` entries for one call); the tool itself runs once.
+- **Several tool calls from one model message run in parallel, each with its own task.** If two of them need approval, LangGraph raises `RuntimeError` for a bare `Command(resume="approve")`; resume with a mapping from interrupt id to answer, as in `tests/adapters/test_langgraph.py`. A call without an answer does not run.
+- **Run ids and sessions live in memory** of the process. A restarted process starts new sessions; nothing is restored from a checkpointer.
+- **The AgentDojo replay is not an LLM benchmark.** It measures a scripted agent that follows AgentDojo's ground truth. No LLM result is shipped; see `bench/agentdojo/README.md` for what it shows and its failures. Some AgentDojo injection tasks are scored from attempted calls, so a blocked attempt still counts as an attack success there.
+
+## Not implemented yet (design document §15 M6)
+
+`drift_policy: cue`, resources/prompts in the label system, elicitation-based approval, evidence conflicts ("shadowing"), Streamable HTTP towards the client, adapters for other agent frameworks, and an LLM run of the AgentDojo benchmark.

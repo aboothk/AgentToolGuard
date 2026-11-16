@@ -1,0 +1,269 @@
+lock_version: 1
+servers:
+  local:
+    launch_digest: null
+    tools:
+      cancel_calendar_event:
+        approved_at: null
+        digest: sha256:1d847c67199eb4a3f3210b9868e9f32088ed047511b15250389ab8fd7b27e6d9
+        egress: null
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:5ff1135028621f77703c966e76e8d8a1654cd75ea28761c65d7eca00fff221f7
+      check_restaurant_opening_hours:
+        approved_at: null
+        digest: sha256:0d957596c4d7578bb3b654325765da502d5129f360e4b37ca92f65d78c862dfd
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:697c75470d00bbfe3d7eae8424dfeb3bb78243605713ee0270a735d5c29fb81c
+      create_calendar_event:
+        approved_at: null
+        digest: sha256:f639d381020a6b93004147179e210c688f58dcbc9ada3568a160a1f734fea350
+        egress:
+          destination_args:
+          - participants
+          kind: message
+          payload_args:
+          - title
+          - description
+          - location
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:53b46cb0b3c55dad8fb89d708c0e3362afdece1335babbd2d00cc2cf379280af
+      get_all_car_rental_companies_in_city:
+        approved_at: null
+        digest: sha256:442981c8d703fc4fa488b07ed1bc140b15095202e412e74192d76d9bcf537cd0
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:108153e00c81ba5e3d412fdd5f7598deb005160a042bd5a259a3f3e337f7fff4
+      get_all_hotels_in_city:
+        approved_at: null
+        digest: sha256:4924f0df4608d36540231103ca549db08fe463a2dc9713fd3bab5c23d9073364
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:b92d355ef39f687b3dd8bb2e5b19b3d53ad5383c0dedf4ebdd9e5f44d5fbd69a
+      get_all_restaurants_in_city:
+        approved_at: null
+        digest: sha256:2dd6189b4c9158cc64d0c6834414b8976646bed2af01183b930456c35fb9a0ac
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:e1a2d0d6939ca1a13df054c65fdcbb53eaed7360a994c652671018c3c77ca085
+      get_car_fuel_options:
+        approved_at: null
+        digest: sha256:095a8a2dc99568a913c968f3124c7654720057973481a33e6541d7af724632f3
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:1b9d82c6d5276f6a4c6fd99848099b4b2a7f814df77aa58f113c8df8b490c73d
+      get_car_price_per_day:
+        approved_at: null
+        digest: sha256:67f57a2c0f93e3843c6027ad17e933e2bc742973c4a65c903c4aa7e483162125
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:c6f7e5d0612e8661d5eda0978bca7de5ac3ce601dee9b15c5d9a84d756eb7f14
+      get_car_rental_address:
+        approved_at: null
+        digest: sha256:1a1c9c06066b11c78cf8b8c82f0a13e6069b556e33249557919399f6a944b04e
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:0843217e2868cf41b11ea6e7c08c907cdb2c39d240c4f40e961a45f7cce5dd61
+      get_car_types_available:
+        approved_at: null
+        digest: sha256:87f7546eb60511853cd3dd387ec1a7fd6e206034cf8322b06ffb5d967c390b4f
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:10b39b86f8a02ca03d77c87f318fbcf9e7fa1fbd92fcbabf3ee0ad76fda5d3cb
+      get_contact_information_for_restaurants:
+        approved_at: null
+        digest: sha256:00bdd3ddfc39fc1dc465ae0e42734acbb5ea3c20b71dc48dcb7a54b711c66385
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:0fb45f2faa0df8fbfb1ddf09ed71da365c477ba3b31123e02f4b5842f47af36c
+      get_cuisine_type_for_restaurants:
+        approved_at: null
+        digest: sha256:e760b8f5eb9f6f379d45acdc3a6d8bd876c9c66dab832c770e6d365c7ca5551f
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:1fd7a122bbc2662498650dd14f708c4aad3a62189ef49b05715caeab7835efc0
+      get_day_calendar_events:
+        approved_at: null
+        digest: sha256:58f595c601e6bf8bf0f40fb2767f6a1084251ad32d50f42c0c75c4ef4c79c984
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:0a96eee610bf3dff5e6836848418c0a469f2286dba5ca0d20b8a52fb3510eca2
+      get_dietary_restrictions_for_all_restaurants:
+        approved_at: null
+        digest: sha256:2a0cfadabafd1eead77238807b34546d65b33d1744c95e654099d9d21820c74f
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:1c82bef38b553e6f551e39deaffa2756e176dc7a47e1f1918cca91c9be7bed50
+      get_flight_information:
+        approved_at: null
+        digest: sha256:fc72e8cf902667a38ff3ea566d5ccd694b5671fa86b2a6f6af8288c86b1ae664
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:9a1852f146a348fc66ce39efce7a4ec9b97a34d72e15c19bacfd67ab51a7ae8c
+      get_hotels_address:
+        approved_at: null
+        digest: sha256:5599076229638ae5160373e4f41f0ee1919a8619fe1ee82bc611517331d6b3db
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:7d613d746544b5f721dff61a4f277934ecb27478dd86d468d7340e47fe6a3709
+      get_hotels_prices:
+        approved_at: null
+        digest: sha256:2cd97ec8436dc793c5a449f68bb2c02f53ce17cbacfdf857cf1998f1fc8cf8f8
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:5690767583419d2ed6bca8992ab52f910729acea216abc70a72f41c13b8fb495
+      get_price_for_restaurants:
+        approved_at: null
+        digest: sha256:4b37ef790807c96933da512395406dacff942e3e70fd1959c4dee1a42b07fe0e
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:b5edeff30d1ee14015524b8f74941e0d2020d263190c5c002d7519bee58e9bed
+      get_rating_reviews_for_car_rental:
+        approved_at: null
+        digest: sha256:316fd18c701f725f59796ebda893a39b8a81111ed53b26ab4397ec4cdfca457c
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:caa4872869928c90f99d86b9609aacfff59018239b0e7b42266fbd26c15248d1
+      get_rating_reviews_for_hotels:
+        approved_at: null
+        digest: sha256:cc5338a27c36b867a446c92c9ff2f0f5de497323fbd7eacdf827b95565b319c1
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:a6beb0cb02f10cc2df67f4d5828ab9c9f95749293ad6d8d32fb2333ad6883f3a
+      get_rating_reviews_for_restaurants:
+        approved_at: null
+        digest: sha256:8e8543d61a1153348e1767c10e4cdfb4d03b798766dec8b61568d0740d1bae6f
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:37c2645f41baf33a68e1a09be66df8173075235f7732db70f99c59918084b536
+      get_restaurants_address:
+        approved_at: null
+        digest: sha256:5a07ef8170653eb7ed24d39a8b8cd3d04d4b39f3d141a56f73ae6bef30d18138
+        egress: null
+        labels:
+          produces:
+          - untrusted
+        status: approved
+        structural: sha256:f6a075a95588ee3ec307ef62958e58f3dc4c44be81f2253a44d0845a4cc84347
+      get_user_information:
+        approved_at: null
+        digest: sha256:1d77edb2055a60833b36aad19f2fb83fe8742f49f8a20ed712745d6156b6630b
+        egress: null
+        labels:
+          produces:
+          - confidential
+        status: approved
+        structural: sha256:f7714ba1da51da778f9e9d91855c0e0a71e82fd5482b3dbba17585ff149642e2
+      reserve_car_rental:
+        approved_at: null
+        digest: sha256:9c57b810e33f7d1d53bddeba86116a2c4f9822a32a10adda80cc41473852835c
+        egress: null
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:c4b3a6561c8f932eec2f628aeb47c44942fd9abbb8de82911498dd49b8abaa85
+      reserve_hotel:
+        approved_at: null
+        digest: sha256:97265c68d4f3a1b6e68b6f2977ac572dab0de9286d0c2364d279c55a5ef01b87
+        egress: null
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:15d6e16393b337c0dcc85546c8c0414f37af1dc7a3fb876c0d65bd705f7761ed
+      reserve_restaurant:
+        approved_at: null
+        digest: sha256:7590cf3cebc7d0c39decc1807afef1f335624e6c1cc05fc9f07dd876c1a1c65b
+        egress: null
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:3110595940800f6461a59fb71c5c0229a8d63b64e93a7d8cb1aae1a08679328f
+      search_calendar_events:
+        approved_at: null
+        digest: sha256:a365a4b79dbd5d6b2e87cef23036cea9d5c45e9fd00f6f3fd2417f82355faf0a
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:a3ba40a2f4c84c266f0c0d8d394e96a0b35af5234c95ae9a6eab92dcbcff4083
+      send_email:
+        approved_at: null
+        digest: sha256:4bfc3287c69711d6a472fb4eb4bb57f77f7811ad3621ce6ad2f6de058d4fade3
+        egress:
+          destination_args:
+          - recipients
+          - cc
+          - bcc
+          kind: message
+          payload_args:
+          - subject
+          - body
+          - attachments
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:c510659b2b7f58a0714303d1418431a7e05889953f9fefe91cd095a0e3f7db37

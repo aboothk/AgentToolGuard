@@ -1,0 +1,246 @@
+lock_version: 1
+servers:
+  local:
+    launch_digest: null
+    tools:
+      add_calendar_event_participants:
+        approved_at: null
+        digest: sha256:3d49165e1c91971fb9162eda8d1247094417ceab0799d9ebf41056fa3c97dce2
+        egress:
+          destination_args:
+          - participants
+          kind: message
+          payload_args: []
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:0c0c400278c097ae626abf9b47c8d623f9b12f5a4a5fda71c8ae0861378ac05f
+      append_to_file:
+        approved_at: null
+        digest: sha256:b6d064f0fdffa0b7b5e4f84fc7a8d8ba4608a9a4d84c2a17786925c3fcf4c060
+        egress: null
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:b24901ef9502375b3834a2826bb8c59cc3ce2d406531e987c96130985f40175f
+      cancel_calendar_event:
+        approved_at: null
+        digest: sha256:1d847c67199eb4a3f3210b9868e9f32088ed047511b15250389ab8fd7b27e6d9
+        egress: null
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:5ff1135028621f77703c966e76e8d8a1654cd75ea28761c65d7eca00fff221f7
+      create_calendar_event:
+        approved_at: null
+        digest: sha256:f639d381020a6b93004147179e210c688f58dcbc9ada3568a160a1f734fea350
+        egress:
+          destination_args:
+          - participants
+          kind: message
+          payload_args:
+          - title
+          - description
+          - location
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:53b46cb0b3c55dad8fb89d708c0e3362afdece1335babbd2d00cc2cf379280af
+      create_file:
+        approved_at: null
+        digest: sha256:a4e94dd8be19050c933f8e9e1d5d76b72501a1498e858e63ed25c204b5e1aa53
+        egress: null
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:8cf5d8f878b10b6fbdf76c2e6abc61b3db729a0b341796cf587f982afb930833
+      delete_email:
+        approved_at: null
+        digest: sha256:cc61bd1ca67f5fe533a04ffbf20907b2e29f781e7b215ce2cc4e7f1aaa9a35f4
+        egress:
+          destination_args: []
+          kind: message
+          payload_args: []
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:1a8cb75ddefee55adbea31769f40ef64a8d90cadee0b1197d8a2935e7a7836b7
+      delete_file:
+        approved_at: null
+        digest: sha256:3f0b4cac6eff671fb7d31361f0261f0546eb482d79a599fe039cd3310d171580
+        egress: null
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:44924cb546fa051349452d30fff5742d892d718b731341ea10f588f819e8a16c
+      get_current_day:
+        approved_at: null
+        digest: sha256:a30d8f22209e1c2b90e68f8c31a3987155a49310152ab0a46ae971492bf17a95
+        egress: null
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:4700f181538e6701118088eda6fd4a87ce315c2337898c6adf47dec06c29e467
+      get_day_calendar_events:
+        approved_at: null
+        digest: sha256:58f595c601e6bf8bf0f40fb2767f6a1084251ad32d50f42c0c75c4ef4c79c984
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:0a96eee610bf3dff5e6836848418c0a469f2286dba5ca0d20b8a52fb3510eca2
+      get_draft_emails:
+        approved_at: null
+        digest: sha256:05dbb109645b7150c1613391422eb77c7ec2d4c8e666a8366525b15726549667
+        egress: null
+        labels:
+          produces:
+          - confidential
+        status: approved
+        structural: sha256:2857db0ac8b013089bfd250d1c8488e710eda12f65333cb9d8d1d3ad13da920f
+      get_file_by_id:
+        approved_at: null
+        digest: sha256:47f470e8ce7613c38de43b430f8d5d8b8a667a6833f8229066078bc49d6e830c
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:c03aed1f1b522c445880db324468e062e0dca38406a3162111d850d018ba4db4
+      get_received_emails:
+        approved_at: null
+        digest: sha256:df383ba97c7424634d4eefb82e417d1793c387f2f08431af724997af8b9df81d
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:cf5cc7e40ed2b112d5ec1f26c0640b782435793d8cbe70bee0f4df69dab8bd6b
+      get_sent_emails:
+        approved_at: null
+        digest: sha256:c5b5eb6d8ef392646498ddde1cfd7d7d9952b574a5d80795afe39f1691599668
+        egress: null
+        labels:
+          produces:
+          - confidential
+        status: approved
+        structural: sha256:b5611551c67ff16a4aad44f729b954f91d987504a2d4a627b8ceb1579711663a
+      get_unread_emails:
+        approved_at: null
+        digest: sha256:10c7d068770fe3e6ecdb5abb0f12374b28f0ccc0f1fcae36738e898e9b5b1c79
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:36083802cb15dfb8d64754f028bf36d0abb26f7bc6d3f1cae551ed0a347c8cc5
+      list_files:
+        approved_at: null
+        digest: sha256:23fd126115172c41a8fe9b528dd52ef545c1c8457e8ba9a32d9fe8b3ae842bee
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:791dae83aecf1db1927b66dcf42f77a8f43c237a6b11dacb8cfeae6ef01c4694
+      reschedule_calendar_event:
+        approved_at: null
+        digest: sha256:f284bdb56ebf6bead818c2ca88f551c4fdc133d65a86bf83a6b5126e56a58c77
+        egress: null
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:3e392610701ae4554549b63dc6ee3364af0d44b82c204817d818299432831033
+      search_calendar_events:
+        approved_at: null
+        digest: sha256:a365a4b79dbd5d6b2e87cef23036cea9d5c45e9fd00f6f3fd2417f82355faf0a
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:a3ba40a2f4c84c266f0c0d8d394e96a0b35af5234c95ae9a6eab92dcbcff4083
+      search_contacts_by_email:
+        approved_at: null
+        digest: sha256:c2a3d034f27779a84a6c4e84afac6b909b71758b831fb0387d42f254abda3eb3
+        egress: null
+        labels:
+          produces:
+          - confidential
+        status: approved
+        structural: sha256:5f4a7dd9e4d4dd9abfdb02bd30707289759a1155ccd347243d0e9d42393fc2b3
+      search_contacts_by_name:
+        approved_at: null
+        digest: sha256:834162121e5fec7cda788414821a6efcde5f9a20cc4e2d9cb8f8baa66e2c2e3f
+        egress: null
+        labels:
+          produces:
+          - confidential
+        status: approved
+        structural: sha256:a5ca792e7e6b37f63f685a5259877417ebc3391d4a916e80e2ee9b6b7f6b1c64
+      search_emails:
+        approved_at: null
+        digest: sha256:01f4f12c790d09b934acc1919b37d2120aae0c9155d9a5ba57141e8197298d55
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:1a6e0374ff6d4610059c4cc45ef210f69ae217d50f84e14251f95e1efadd52d6
+      search_files:
+        approved_at: null
+        digest: sha256:c4d9118f68624335ffc0ae144d750ebf807938b54566d0da48111eb2585c249d
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:2aba0af8abe9ebdd8d19dd4251cd2d5a5d5090cd44e9e9a09c7525cdb2d688d0
+      search_files_by_filename:
+        approved_at: null
+        digest: sha256:b36ea433449893d9f1dd530e023833421acdccbf3c79d59deef706419593ae48
+        egress: null
+        labels:
+          produces:
+          - confidential
+          - untrusted
+        status: approved
+        structural: sha256:f398d16a643b9f57fe518cb81a89791e1717b0a5a5d57f9604544dd1892293a5
+      send_email:
+        approved_at: null
+        digest: sha256:4bfc3287c69711d6a472fb4eb4bb57f77f7811ad3621ce6ad2f6de058d4fade3
+        egress:
+          destination_args:
+          - recipients
+          - cc
+          - bcc
+          kind: message
+          payload_args:
+          - subject
+          - body
+          - attachments
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:c510659b2b7f58a0714303d1418431a7e05889953f9fefe91cd095a0e3f7db37
+      share_file:
+        approved_at: null
+        digest: sha256:c8fb73904abbe8fa723b33be615d7c89dcac10149ce339c2998d970eef66e6ac
+        egress:
+          destination_args:
+          - email
+          kind: message
+          payload_args: []
+        labels:
+          produces: []
+        status: approved
+        structural: sha256:169a0f3338cac3d39e1e7e3950e1de5a5de8498e5d9770ff1fd83fafceb7f26e

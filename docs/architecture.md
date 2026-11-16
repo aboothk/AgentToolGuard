@@ -1,5 +1,7 @@
 # Architecture
 
+English · [简体中文](architecture.zh-CN.md)
+
 One framework-free core and thin adapters. A test fails if anything in `core/` imports `mcp`, `langgraph`, `langchain`, `typer` or the adapters.
 
 ```text

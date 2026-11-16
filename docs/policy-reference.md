@@ -1,5 +1,7 @@
 # Policy reference
 
+English · [简体中文](policy-reference.zh-CN.md)
+
 `agentguard.yaml`. Unknown fields and duplicate keys are errors. Relative paths are relative to the file. Every field below has a test that shows it changes behaviour.
 
 ```yaml

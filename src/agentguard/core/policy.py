@@ -18,6 +18,7 @@ from agentguard.core.canonical import canonical_dumps, load_yaml_strict, to_plai
 from agentguard.core.lock import sha256_digest
 from agentguard.core.models import Decision, Model
 
+LOCAL_SERVER = "local"  # reserved server name for Python tools wrapped by the SDK
 FORBIDDEN_ENV_NAMES = {
     "PYTHONPATH",
     "PYTHONHOME",
@@ -190,6 +191,8 @@ class Config(Model):
         for name in servers:
             if "__" in name or not name:
                 raise ValueError(f"invalid server name {name!r}: must be non-empty, no '__'")
+            if name == LOCAL_SERVER:
+                raise ValueError(f"server name {LOCAL_SERVER!r} is reserved for local Python tools")
         return servers
 
     @model_validator(mode="after")

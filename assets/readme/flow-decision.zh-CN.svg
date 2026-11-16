@@ -1,0 +1,32 @@
+<svg xml:lang="zh-CN" xmlns="http://www.w3.org/2000/svg" width="1200" height="344" viewBox="0 0 1200 344" role="img" aria-labelledby="title desc">
+  <title id="title">同一份机密文档，两个收件人</title>
+  <desc id="desc">files__read_document 返回机密数据后，规则 FL-001 放行发往 alice@corp.example 的示例邮件，并拦截发往 evil@attacker.example 的同一份文档。</desc>
+  <rect width="1200" height="344" rx="16" fill="#12252b"/>
+  <path d="M0 74h1200" stroke="#43595c"/>
+  <g font-family="Consolas, Menlo, Microsoft YaHei, PingFang SC, monospace" font-size="23" fill="#c2d4d1">
+    <text x="40" y="47">AgentGuard / 数据流判定</text>
+    <text x="1160" y="47" text-anchor="end">规则 FL-001</text>
+  </g>
+  <!-- A single read supplies both calls. Symbols distinguish the outcomes even without color. -->
+  <g fill="none" stroke="#8ca6a6" stroke-width="3">
+    <path d="M408 211h35q15 0 15-15v-27q0-15 15-15h35 M458 196v58q0 15 15 15h35"/>
+    <circle cx="408" cy="211" r="5" fill="#c2d4d1"/>
+  </g>
+  <g font-family="Segoe UI, Microsoft YaHei, PingFang SC, Noto Sans CJK SC, sans-serif">
+    <path d="M43 134h27l12 12v35H43z M69 134v14h13 M51 156h21 M51 165h15" fill="none" stroke="#eaf1ec" stroke-width="3" stroke-linejoin="round"/>
+    <text x="40" y="232" font-size="46" font-weight="650" fill="#f1f5ec">机密文档</text>
+    <text x="40" y="271" font-family="Consolas, Menlo, Microsoft YaHei, PingFang SC, monospace" font-size="24" fill="#b4c8c6">files__read_document</text>
+    <rect x="508" y="100" width="652" height="102" rx="9" fill="#1c3436"/>
+    <rect x="508" y="216" width="652" height="102" rx="9" fill="#25343a"/>
+    <g font-family="Consolas, Menlo, Microsoft YaHei, PingFang SC, monospace" font-size="30" fill="#f1f5ec">
+      <text x="538" y="162">alice@corp.example</text>
+      <text x="538" y="278">evil@attacker.example</text>
+    </g>
+    <g fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m966 150 8 8 15-18" stroke="#97e5c0"/>
+      <path d="m969 260 15 15m0-15-15 15" stroke="#ffb6a6"/>
+    </g>
+    <text x="1002" y="161" font-size="31" font-weight="650" fill="#97e5c0">放行</text>
+    <text x="1002" y="277" font-size="31" font-weight="650" fill="#ffb6a6">拦截</text>
+  </g>
+</svg>

@@ -1,0 +1,29 @@
+# Policy for the AgentDojo banking suite, written from what the tools are.
+#   FL-001  account data must not be written into a payment's recipient or subject
+#   FL-002  after reading text written by others (files, transaction subjects), anything that moves
+#           money or changes the account needs a human
+version: 1
+mode: enforce
+principal: agentdojo-user
+lock: agentguard.lock
+audit: {path: audit.jsonl}
+approval: {dir: approvals}
+tools_recheck_seconds: null
+flow:
+  destinations: {}
+  rules:
+    - id: FL-001
+      from: [confidential, secret]
+      to: {kind: [message, network]}
+      on_value_match: deny
+      on_session_exposure: require_approval
+    - id: FL-002
+      from: [untrusted]
+      to:
+        tools:
+          - local__send_money
+          - local__schedule_transaction
+          - local__update_scheduled_transaction
+          - local__update_password
+          - local__update_user_info
+      on_session_exposure: require_approval

@@ -15,9 +15,6 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any, cast
 
-from mcp.shared.version import SUPPORTED_PROTOCOL_VERSIONS
-from mcp.types import LATEST_PROTOCOL_VERSION
-
 from agentguard import __version__
 from agentguard.adapters.mcp.frames import (
     INVALID_PARAMS,
@@ -33,6 +30,7 @@ from agentguard.adapters.mcp.frames import (
     parse_message,
     read_line,
 )
+from agentguard.adapters.mcp.protocol import LATEST_PROTOCOL_VERSION, SUPPORTED_PROTOCOL_VERSIONS
 from agentguard.adapters.mcp.upstream import (
     RpcError,
     Upstream,

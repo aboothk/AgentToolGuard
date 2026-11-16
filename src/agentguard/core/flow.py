@@ -54,7 +54,7 @@ class FlowEngine:
             exposed = session.labels & set(rule.from_)
             if not exposed:
                 continue
-            if self._destinations_allowed(rule, call, egress):
+            if self._destinations_allowed(rule, call, egress, session):
                 continue
             findings.append(self._evidence_for(rule, call, egress, session, exposed))
         return findings
@@ -64,11 +64,21 @@ class FlowEngine:
         by_kind = egress is not None and egress.kind in rule.to.kind
         return by_kind or tool_matches(rule.to.tools, tool_id)
 
-    def _destinations_allowed(self, rule: FlowRule, call: ToolCall, egress: Egress | None) -> bool:
+    def _allowed_set_names(self, rule: FlowRule, call: ToolCall, session: Session) -> list[str]:
+        """The rule's allowlists, unless the current task replaced them for this tool (section 11.1)."""
+        for tool_pattern, names in session.destination_overrides.items():
+            if tool_matches([tool_pattern], call.tool_id):
+                return names
+        return rule.allow_destinations
+
+    def _destinations_allowed(
+        self, rule: FlowRule, call: ToolCall, egress: Egress | None, session: Session
+    ) -> bool:
         """True only if every destination is on the allowlist; anything unparseable is not."""
-        if egress is None or not egress.destination_args or not rule.allow_destinations:
+        names = self._allowed_set_names(rule, call, session)
+        if egress is None or not egress.destination_args or not names:
             return False
-        patterns = [pattern for name in rule.allow_destinations for pattern in self.config.destinations[name]]
+        patterns = [pattern for name in names for pattern in self.config.destinations[name]]
         found_any = False
         for arg_name in egress.destination_args:
             if arg_name not in call.args:
@@ -170,12 +180,18 @@ class FlowEngine:
     def tag_result(
         self, session: Session, call_id: str, locked: LockedTool | None, result: dict[str, Any]
     ) -> set[str]:
-        """Give the result its labels and remember its values (§6.7). Returns the labels."""
+        """Label an MCP tool result (section 6.7). Returns the labels."""
         if result.get("isError"):
             return set()
+        return self.tag_texts(session, call_id, locked, result_texts(result))
+
+    def tag_texts(
+        self, session: Session, call_id: str, locked: LockedTool | None, texts: list[str]
+    ) -> set[str]:
+        """Give a tool's output strings their labels and remember their values."""
         labels = set(locked.labels.produces) if locked else set()
         protected = labels - {UNTRUSTED}
-        for text in result_texts(result):
+        for text in texts:
             if protected:
                 session.index.add(text, protected, call_id)
             for secret in find_secrets(text):

@@ -1,0 +1,26 @@
+# What each tool IS, never which injection task exists (design document section 14.1).
+# produces: labels of the data the tool returns. egress: where the tool can send data.
+#   confidential  private data of the user (mail, calendar, drive, contacts)
+#   untrusted     text written by other people (received mail, shared files, event descriptions)
+tools:
+  get_unread_emails: {produces: [confidential, untrusted]}
+  get_received_emails: {produces: [confidential, untrusted]}
+  search_emails: {produces: [confidential, untrusted]}
+  get_sent_emails: {produces: [confidential]}
+  get_draft_emails: {produces: [confidential]}
+  search_contacts_by_name: {produces: [confidential]}
+  search_contacts_by_email: {produces: [confidential]}
+  search_calendar_events: {produces: [confidential, untrusted]}
+  get_day_calendar_events: {produces: [confidential, untrusted]}
+  search_files_by_filename: {produces: [confidential, untrusted]}
+  get_file_by_id: {produces: [confidential, untrusted]}
+  list_files: {produces: [confidential, untrusted]}
+  search_files: {produces: [confidential, untrusted]}
+  send_email:
+    egress: {kind: message, destination_args: [recipients, cc, bcc], payload_args: [subject, body, attachments]}
+  share_file:
+    egress: {kind: message, destination_args: [email], payload_args: []}
+  create_calendar_event:
+    egress: {kind: message, destination_args: [participants], payload_args: [title, description, location]}
+  add_calendar_event_participants:
+    egress: {kind: message, destination_args: [participants], payload_args: []}
