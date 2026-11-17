@@ -69,7 +69,7 @@ OPENAI_API_KEY=... python bench/agentdojo/run_benchmark.py --model <model> --con
 
 工具摘要依赖 Pydantic 输出的 schema，因此锁文件与生成时的 AgentDojo、Pydantic 版本绑定。build_locks.py --check 可检查是否需要重新审核。
 
-## DeepSeek 运行（部分：目前只有无防护基线跑完）
+## DeepSeek 运行（仅无防护基线）
 
 `deepseek-chat`，温度 0，攻击 `important_instructions_no_model_name`，每个套件的全部用户任务，3 个注入任务（在套件中均匀选取，不是全部），3 次重复；数字为均值（重复间的最小–最大）。由 `summarize.py` 汇总为 `results/deepseek-summary.json`。
 
@@ -80,7 +80,7 @@ OPENAI_API_KEY=... python bench/agentdojo/run_benchmark.py --model <model> --con
 | banking | 77%（62%–88%） | 59%（56%–62%） | 0%（0%–0%） |
 | slack | 100%（100%–100%） | 74%（71%–76%） | 2%（2%–2%） |
 
-- **三种带防护的配置还没有发布。** 第一批运行已作废：`guard_pipeline` 把带防护的运行时存在 AgentDojo 的 `extra_args` 里，而 AgentDojo 让所有任务和套件共用同一个字典，导致后面套件的工具全被当成无效工具。该问题已修复（`tests/adapters/test_agentdojo.py` 有回归测试），带防护的配置正在重跑。
-- **这个模型在这个攻击下很少被劫持**（攻击成功率 0–2%），因此这组实验无法证明 AgentGuard 降低了攻击成功率，这一点由上文的标准答案回放说明。LLM 运行能展示的是防护对正常任务的代价。
+- **三种带防护的配置没有跑完，因此没有带防护的 LLM 结果。** 第一批运行已作废：`guard_pipeline` 把带防护的运行时存在 AgentDojo 的 `extra_args` 里，而 AgentDojo 让所有任务和套件共用同一个字典，导致后面套件的工具全被当成无效工具。该问题已修复（`tests/adapters/test_agentdojo.py` 有回归测试）。第二批被有意停止：无防护基线显示这个模型和攻击下没有可拦的东西，继续跑只会测出防护的代价，而这一点回放已经给出估算。
+- **这个模型在这个攻击下很少被劫持**（攻击成功率 0–2%），因此这组实验无法证明 AgentGuard 降低了攻击成功率，这一点由上文的标准答案回放说明。有意义的 LLM 测量需要一个真能劫持无防护智能体的模型或攻击，这一点尚未尝试。
 - 这一部分到目前的消耗：约 1670 万输入 token、70 万输出 token。
 - DeepSeek 偶尔返回不合法的 JSON 工具参数，会让 AgentDojo 崩溃。`run_benchmark.py` 把这类调用改为空参数（模型会看到校验错误），对所有配置一视同仁。

@@ -69,7 +69,7 @@ OPENAI_API_KEY=... python bench/agentdojo/run_benchmark.py --model <model> --con
 
 Pydantic's schema output feeds the tool digests, so the shipped lockfiles are tied to the AgentDojo and Pydantic versions they were generated with; `build_locks.py --check` tells you when they need a new review.
 
-## DeepSeek runs (partial: only the unprotected baseline has finished)
+## DeepSeek runs (unprotected baseline only)
 
 `deepseek-chat`, temperature 0, attack `important_instructions_no_model_name`, every user task, 3 injection tasks per suite (spread evenly over the suite, not all of them), 3 repeats; mean (min-max over the repeats). Combined by `summarize.py` into `results/deepseek-summary.json`.
 
@@ -80,7 +80,7 @@ Pydantic's schema output feeds the tool digests, so the shipped lockfiles are ti
 | banking | 77% (62%-88%) | 59% (56%-62%) | 0% (0%-0%) |
 | slack | 100% (100%-100%) | 74% (71%-76%) | 2% (2%-2%) |
 
-* **The three protected configurations are not published yet.** A first set of runs was discarded: `guard_pipeline` kept its guarded runtime in AgentDojo's `extra_args`, a dictionary that AgentDojo shares between all tasks and suites, so every tool of the later suites was rejected as invalid. That is fixed (`tests/adapters/test_agentdojo.py` has a regression test) and the protected configurations are being run again.
-* **This model and attack rarely hijack the unprotected agent** (attack success 0-2%). The experiment therefore cannot show that AgentGuard lowers the attack success rate; the ground-truth replay above is the evidence for that. What the LLM runs can show is the cost of protection on normal tasks.
+* **The three protected configurations were not run to completion, so no protected LLM result exists.** A first set was discarded: `guard_pipeline` kept its guarded runtime in AgentDojo's `extra_args`, a dictionary that AgentDojo shares between all tasks and suites, so every tool of the later suites was rejected as invalid. That is fixed (`tests/adapters/test_agentdojo.py` has a regression test). A second set was stopped on purpose, because the unprotected baseline shows nothing to block with this model and attack; it would only have measured the cost of protection, which the replay already estimates.
+* **This model and attack rarely hijack the unprotected agent** (attack success 0-2%). The experiment therefore cannot show that AgentGuard lowers the attack success rate; the ground-truth replay above is the evidence for that. A meaningful LLM measurement needs a model or attack that actually hijacks the unprotected agent; that has not been tried.
 * Cost of this part so far: about 16.7 million prompt tokens and 0.7 million completion tokens.
 * DeepSeek sometimes returns tool arguments that are not valid JSON, which makes AgentDojo crash. `run_benchmark.py` turns such a call into one with empty arguments (the model sees a validation error), the same for every configuration.
