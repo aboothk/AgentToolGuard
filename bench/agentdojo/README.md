@@ -6,7 +6,7 @@ What is here, and what is not.
 
 **Shipped:** the adapter (`agentguard.adapters.agentdojo`), a policy and a lockfile per suite (`suites/<suite>/`), a ground-truth replay with its results, and the script for the real LLM benchmark.
 
-**Not shipped: any LLM result.** The benchmark of the design document (a fixed model, at least 3 repeats, three configurations) needs an API key and costs money. `run_benchmark.py` has never been run against a real model, and no numbers from it exist. Its loop (guarded executor inside AgentDojo's own benchmark functions, logger, attack loading) is exercised in `tests/adapters/test_agentdojo.py` with a scripted stand-in for the model; a first real run may still hit model-specific problems.
+**LLM results: only an unprotected baseline.** The benchmark of the design document (a fixed model, at least 3 repeats, every configuration) needs an API key and costs money. One model was run without protection (see *DeepSeek runs* below); no protected LLM result exists. The ground-truth replay is the evidence for what the protection stops.
 
 ## Ground-truth replay (no model)
 
@@ -16,32 +16,32 @@ What is here, and what is not.
 * **Attack success**: the ground-truth calls of a user task, then those of an injection task, scored by AgentDojo's `security`. That is an *ideal hijacked agent*: it does its job, then the attacker's. A real model may refuse, improvise or stop early; only the LLM run measures that.
 * **Approvals** are answered automatically: *denied* is the lower bound of what a human would allow, *granted* the upper bound.
 
-| suite | configuration | normal tasks completed | approvals asked per task | attack success |
-|---|---|---:|---:|---:|
-| banking | full, approvals denied | 44% | 0.56 | 0% |
-| banking | full, approvals granted | 81% | 0.56 | 89% |
-| banking | lockfile + argument rules | 100% | 0.00 | 98% |
-| banking | no protection | 100% | 0.00 | 98% |
-| slack | full, approvals denied | 5% | 2.14 | 37% |
-| slack | full, approvals granted | 100% | 2.14 | 60% |
-| slack | lockfile + argument rules | 100% | 0.00 | 100% |
-| slack | no protection | 100% | 0.00 | 100% |
-| travel | full, approvals denied | 70% | 0.30 | 0% |
-| travel | full, approvals granted | 100% | 0.30 | 57% |
-| travel | lockfile + argument rules | 100% | 0.00 | 86% |
-| travel | no protection | 100% | 0.00 | 86% |
-| workspace | full, approvals denied | 45% | 0.50 | 0% |
-| workspace | full, approvals granted | 80% | 0.50 | 36% |
-| workspace | lockfile + argument rules | 100% | 0.00 | 43% |
-| workspace | no protection | 100% | 0.00 | 43% |
+**Attack success** (an ideal hijacked agent), configurations from least to most protection:
+
+| suite | no protection | lockfile + argument rules | full, approvals granted | full, approvals denied |
+|---|---:|---:|---:|---:|
+| workspace | 43% | 43% | 36% | **0%** |
+| travel | 86% | 86% | 57% | **0%** |
+| banking | 98% | 98% | 89% | **0%** |
+| slack | 100% | 100% | 60% | **37%** |
+
+**What it costs**: normal tasks completed, and approvals asked per task.
+
+| suite | no protection | lockfile + argument rules | full, approvals granted | full, approvals denied | approvals per task |
+|---|---:|---:|---:|---:|---:|
+| workspace | 100% | 100% | 80% | 45% | 0.50 |
+| travel | 100% | 100% | 100% | 70% | 0.30 |
+| banking | 100% | 100% | 81% | 44% | 0.56 |
+| slack | 100% | 100% | 100% | 5% | 2.14 |
 
 Read it like this:
 
-* **Compare against "no protection", not against 100%.** The replay of an attacker's ground truth does not succeed for every pairing even without protection (workspace 43%, travel 86%, banking 98%), (the cause was not investigated).
-* **The lockfile and argument rules change nothing here.** The suites are static and no rule is written against a particular argument; the lockfile protects against changes between approval and use, which this replay does not simulate. The row exists so the configurations match the design.
-* **"Approvals denied" stops almost every attack and costs normal tasks.** Slack tasks nearly always read a message or web page and then post, so they nearly always ask. That is the price of the rule "after reading text written by others, anything that changes state needs a human", and the number shows why `observe` mode and the allowlists exist.
-* **"Approvals granted" is the upper bound** on what a human could allow. Attacks that remain are the ones whose calls a reviewer would have to recognise as attacks; AgentGuard only makes sure a human is asked.
-* **Value matches cannot be approved away.** The normal tasks that fail even when approvals are granted (banking 3, workspace 8) are tasks that legitimately copy data they just read into an outgoing message or payment (for example the IBAN into a payment subject). Rule FL-001 denies that as a value match. Whether such a task should be allowed is a policy decision; the policies here have no allowlist for it.
+* **Compare against "no protection", not against 100%.** The attacker's ground truth does not succeed for every pairing even without protection (workspace 43%, travel 86%, banking 98%); the cause was not investigated.
+* **"Lockfile + argument rules" equals the baseline, as expected.** The lockfile stops tools that change after approval; AgentDojo's tools never change, so there is nothing for it to stop here. The policies contain no argument rules, because they describe what the tools are, not particular tasks. This row is the control: it shows that the blocking below comes from the data-flow rules.
+* **"Approvals granted" lowers attack success only a little, by design.** The data-flow rules act in two ways. A protected value or fragment in an argument (E1/E2) is denied, and no approval can override that. Reading untrusted text and then changing state (E3) asks a human. Most injected goals are the second kind: sending money to the attacker copies no protected text, it only follows untrusted text. With every approval granted, those go through; what is still stopped (for example slack 100% to 60%) are the attacks that copy protected data verbatim.
+* **"Approvals denied" is what the tool layer can stop.** Workspace, travel and banking go to 0%. Slack keeps 37% for the two reasons under *Failures*.
+* **The protection works through people.** A real reviewer sits between the two "full" columns: the more they refuse, the safer, and the more normal tasks are lost (44%-70% completed when everything is refused; slack 5%, because its tasks nearly always read a message or page and then post). That is why `observe` mode and destination allowlists exist.
+* **Value matches cannot be approved away.** The normal tasks that fail even when approvals are granted (banking 3, workspace 8) legitimately copy data they just read into an outgoing message or payment (for example the IBAN into a payment subject). Rule FL-001 denies that as a value match. Whether such a task should be allowed is a policy decision; the policies here have no allowlist for it.
 
 ## Failures, as they are
 
