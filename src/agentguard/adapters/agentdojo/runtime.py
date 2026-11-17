@@ -12,6 +12,7 @@ covers exactly one task.
 from __future__ import annotations
 
 import uuid
+import weakref
 from collections.abc import Mapping
 from typing import Any, Literal
 
@@ -134,8 +135,6 @@ def guarded_runtime_class(
 
 # --- for real LLM runs: replace the pipeline's tool executor --------------------------------------
 
-_RUNTIME_KEY = "agentguard_runtime"
-
 
 def guard_pipeline(
     pipeline: AgentPipeline,
@@ -147,9 +146,11 @@ def guard_pipeline(
     """Swap every ToolsExecutor in a pipeline for one that asks the Guard first.
 
     `benchmark_suite_with_injections` does not take a runtime class, so for model runs the
-    guard goes into the pipeline instead. One guarded runtime (= one session) is created per task
-    and kept in `extra_args`, which AgentDojo carries through a task's whole pipeline."""
+    guard goes into the pipeline instead. AgentDojo builds one FunctionsRuntime per task, so one
+    guarded runtime (= one session) is kept per original runtime object. It must not be kept in
+    `extra_args`: AgentDojo's `query` uses a mutable default dict for it, shared by every task."""
     runtime_class = guarded_runtime_class(guard, approvals, principal, approval_log)
+    guarded: weakref.WeakKeyDictionary[Any, Any] = weakref.WeakKeyDictionary()
 
     class GuardedToolsExecutor(ToolsExecutor):
         def query(  # type: ignore[no-untyped-def,override]
@@ -157,9 +158,9 @@ def guard_pipeline(
         ):
             env = EmptyEnv() if env is None else env
             extra_args = {} if extra_args is None else extra_args
-            if _RUNTIME_KEY not in extra_args:
-                extra_args[_RUNTIME_KEY] = runtime_class(list(runtime.functions.values()))
-            result = super().query(query, extra_args[_RUNTIME_KEY], env, messages, extra_args)
+            if runtime not in guarded:
+                guarded[runtime] = runtime_class(list(runtime.functions.values()))
+            result = super().query(query, guarded[runtime], env, messages, extra_args)
             return result[0], runtime, *result[2:]
 
     for element in pipeline.elements:

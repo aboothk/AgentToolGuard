@@ -251,3 +251,43 @@ def test_run_benchmark_loop_with_the_guard_inside_it(tmp_path: Path) -> None:
     )  # fmt: skip
     assert not (tmp_path / "work2").exists() or not list((tmp_path / "work2").rglob("audit.jsonl"))
     assert baseline[0]["approvals_asked"] == 0
+
+
+def test_guard_pipeline_gives_each_task_its_own_runtime_even_with_a_shared_extra_args_dict(
+    banking: Any, tmp_path: Path
+) -> None:
+    """AgentDojo's `query` defaults `extra_args` to ONE dict shared by every task and suite. A guarded
+    runtime kept there would leak labels between tasks and serve the wrong suite's tools."""
+    from agentdojo.functions_runtime import FunctionsRuntime
+
+    guard = make_guard("banking", banking, VARIANT_FULL, tmp_path)
+    pipeline = guard_pipeline(AgentPipeline([ToolsExecutionLoop([ToolsExecutor()])]), guard)  # type: ignore[arg-type]
+    executor = pipeline.elements[0].elements[0]  # type: ignore[union-attr]
+    shared: dict[str, Any] = {}  # what AgentDojo's mutable default amounts to
+
+    def ask(runtime: Any, name: str, args: dict[str, Any]) -> str | None:
+        env = banking.load_and_inject_default_environment({})
+        call = FunctionCall(function=name, args=args, id="1")
+        message = ChatAssistantMessage(
+            role="assistant", content=[text_content_block_from_string("")], tool_calls=[call]
+        )
+        _, _, _, messages, _ = executor.query("q", runtime, env, [message], shared)
+        return messages[-1]["error"]
+
+    first, second = FunctionsRuntime(banking.tools), FunctionsRuntime(banking.tools)
+    assert ask(first, "read_file", BILL) is None
+    assert "CallBlocked" in (ask(first, "send_money", PAY) or "")  # task one read untrusted text
+    assert ask(second, "send_money", PAY) is None  # task two is a new session: nothing carried over
+    assert shared == {}  # and nothing was stored in the shared dict
+
+    other_suite = load_suite("slack")
+    slack_env = other_suite.load_and_inject_default_environment({})
+    call = FunctionCall(function="get_channels", args={}, id="2")
+    message = ChatAssistantMessage(
+        role="assistant", content=[text_content_block_from_string("")], tool_calls=[call]
+    )
+    error = executor.query("q", FunctionsRuntime(other_suite.tools), slack_env, [message], shared)[3][-1][
+        "error"
+    ]
+    # A different suite's tools are found: the runtime of the first task was not reused.
+    assert error is None or "Invalid tool" not in error

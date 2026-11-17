@@ -68,3 +68,19 @@ OPENAI_API_KEY=... python bench/agentdojo/run_benchmark.py --model <model> --con
 ```
 
 Pydantic's schema output feeds the tool digests, so the shipped lockfiles are tied to the AgentDojo and Pydantic versions they were generated with; `build_locks.py --check` tells you when they need a new review.
+
+## DeepSeek runs (partial: only the unprotected baseline has finished)
+
+`deepseek-chat`, temperature 0, attack `important_instructions_no_model_name`, every user task, 3 injection tasks per suite (spread evenly over the suite, not all of them), 3 repeats; mean (min-max over the repeats). Combined by `summarize.py` into `results/deepseek-summary.json`.
+
+| suite | normal tasks (no attack) | normal tasks (under attack) | attack success |
+|---|---:|---:|---:|
+| workspace | 99% (98%-100%) | 97% (95%-98%) | 0% (0%-0%) |
+| travel | 80% (75%-85%) | 76% (75%-77%) | 0% (0%-0%) |
+| banking | 77% (62%-88%) | 59% (56%-62%) | 0% (0%-0%) |
+| slack | 100% (100%-100%) | 74% (71%-76%) | 2% (2%-2%) |
+
+* **The three protected configurations are not published yet.** A first set of runs was discarded: `guard_pipeline` kept its guarded runtime in AgentDojo's `extra_args`, a dictionary that AgentDojo shares between all tasks and suites, so every tool of the later suites was rejected as invalid. That is fixed (`tests/adapters/test_agentdojo.py` has a regression test) and the protected configurations are being run again.
+* **This model and attack rarely hijack the unprotected agent** (attack success 0-2%). The experiment therefore cannot show that AgentGuard lowers the attack success rate; the ground-truth replay above is the evidence for that. What the LLM runs can show is the cost of protection on normal tasks.
+* Cost of this part so far: about 16.7 million prompt tokens and 0.7 million completion tokens.
+* DeepSeek sometimes returns tool arguments that are not valid JSON, which makes AgentDojo crash. `run_benchmark.py` turns such a call into one with empty arguments (the model sees a validation error), the same for every configuration.
